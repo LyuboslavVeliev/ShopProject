@@ -1,0 +1,29 @@
+package src;
+
+import java.math.BigDecimal;
+
+public class Cashier {
+    private final long id;
+    private static long numberOfInstances = 0;
+    private String name;
+    private BigDecimal salary;
+
+    public Cashier(String _name, BigDecimal _salary) {
+        numberOfInstances++;
+        this.id = numberOfInstances;
+        this.name = _name;
+        this.salary = _salary;
+    }
+
+    public long getId() {
+        return this.id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public BigDecimal getSalary() {
+        return this.salary;
+    }
+}

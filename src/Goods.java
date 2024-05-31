@@ -10,7 +10,7 @@ public class Goods {
     private static long numberOfInstances = 0;
     private String name;
 
-    public BigDecimal shippingCost;
+    public BigDecimal shippingCost = BigDecimal.valueOf(0);
     public Category category;
     public LocalDate expirationDate;
 
@@ -19,7 +19,6 @@ public class Goods {
     public static final int markupInediblePercentage = 30; // 30%
     public static final int daysUntilReduction = 2; // 2 days
     public static final int reductionPercentage = 10; // 10%
-
 
     public Goods(String _name, BigDecimal _shippingCost, Category _category, LocalDate _expirationDate) {
         numberOfInstances++;

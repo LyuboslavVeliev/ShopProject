@@ -7,6 +7,7 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import src.exceptions.CheckoutNotOpenException;
 import src.exceptions.NotEnoughBudgetException;
 import src.exceptions.NotEnoughGoodsException;
 
@@ -18,9 +19,9 @@ public class Shop {
     private ArrayList<Cashier> cashiers;
     private ArrayList<Receipt> receipts;
 
-    private BigDecimal shippedGoodsExpenses;
-    private BigDecimal goodsProfit;
-    private BigDecimal netProfit;
+    private BigDecimal shippedGoodsExpenses = BigDecimal.valueOf(0);
+    private BigDecimal goodsProfit = BigDecimal.valueOf(0);
+    private BigDecimal netProfit = BigDecimal.valueOf(0);
 
     public Shop() {
         this.shippedGoods = new Hashtable<>();
@@ -32,7 +33,7 @@ public class Shop {
     }
 
     public void addShippedGoods(Goods goods, int quantity) {
-        BigDecimal goodsPrice = goods.Price().multiply(BigDecimal.valueOf(quantity));
+        BigDecimal goodsPrice = goods.shippingCost.multiply(BigDecimal.valueOf(quantity));
 
         if (this.shippedGoods.get(goods) != null) {
             int currentQuantity = this.shippedGoods.get(goods);
@@ -67,7 +68,11 @@ public class Shop {
 
     // A buyer buys goods
     public void buyGoods(Buyer buyer, Dictionary<Goods, Integer> purchasedGoods, Checkout checkout)
-            throws NotEnoughBudgetException, NotEnoughGoodsException {
+            throws NotEnoughBudgetException, NotEnoughGoodsException, CheckoutNotOpenException {
+        if (!this.checkouts.contains(checkout) || !checkout.isOpen()) {
+            throw new CheckoutNotOpenException("This checkout is not open or is non-existent!");
+        }
+
         BigDecimal purchasedGoodsWorth = BigDecimal.valueOf(0);
 
         Enumeration<Goods> goods = purchasedGoods.keys();
@@ -88,8 +93,11 @@ public class Shop {
             throw new NotEnoughBudgetException("Buyer doesn't have enough budget!");
         }
 
-        while (goods.hasMoreElements()) {
-            Goods currentGoods = goods.nextElement();
+        BigDecimal currentGoodsShippedExpenses = BigDecimal.valueOf(0);
+
+        Enumeration<Goods> goods2 = purchasedGoods.keys();
+        while (goods2.hasMoreElements()) {
+            Goods currentGoods = goods2.nextElement();
 
             if (currentGoods.Price() == BigDecimal.valueOf(0)) {
                 continue;
@@ -111,13 +119,47 @@ public class Shop {
                         "Not enough " + currentGoods.getName() + ". Missing " + missingItems + " items.");
             }
 
+            currentGoodsShippedExpenses = currentGoodsShippedExpenses
+                    .add(currentGoods.shippingCost.multiply(BigDecimal.valueOf(demandedQuantity)));
+
             this.shippedGoods.put(currentGoods, currentQuantity - demandedQuantity);
             this.soldGoods.put(currentGoods, demandedQuantity);
         }
+
+        this.goodsProfit = purchasedGoodsWorth.subtract(currentGoodsShippedExpenses);
 
         Receipt receipt = new Receipt(checkout.getCurrentCashier(), LocalTime.now());
         this.receipts.add(receipt);
         // Should make this to save it into a file
         receipt.toString();
+    }
+
+    public int getSoldGoodsCount() {
+        return this.soldGoods.size();
+    }
+
+    public BigDecimal getSalaryExpenses() {
+        BigDecimal totalSalaryExpenses = BigDecimal.valueOf(0);
+
+        for (int i = 0; i < this.cashiers.size(); i++) {
+            BigDecimal currentCashierSalary = this.cashiers.get(i).getSalary();
+            totalSalaryExpenses = totalSalaryExpenses.add(currentCashierSalary);
+        }
+
+        return totalSalaryExpenses;
+    }
+
+    public BigDecimal getShippedGoodsExpenses() {
+        return this.shippedGoodsExpenses;
+    }
+
+    public BigDecimal getGoodsProfit() {
+        return this.goodsProfit;
+    }
+
+    public BigDecimal getNetProfit() {
+        this.netProfit = this.goodsProfit.subtract(getSalaryExpenses());
+
+        return this.netProfit;
     }
 }

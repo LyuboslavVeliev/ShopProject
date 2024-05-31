@@ -6,7 +6,7 @@ public class Cashier {
     private final long id;
     private static long numberOfInstances = 0;
     private String name;
-    private BigDecimal salary;
+    private BigDecimal salary = BigDecimal.valueOf(0);
 
     public Cashier(String _name, BigDecimal _salary) {
         numberOfInstances++;

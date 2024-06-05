@@ -1,10 +1,13 @@
 package src;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 import src.enums.Category;
 
@@ -37,6 +40,13 @@ public class Main {
         System.out.println("Goods profit: " + shop.getGoodsProfit());
         System.out.println("Net profit: " + shop.getNetProfit());
         System.out.println("Sold items: " + shop.getSoldGoodsCount());
+        System.out.println("Number of issued receipts: " + shop.getCurrentNumberOfReceiptsIssued());
+
+        try {
+            shop.readReceiptFromFile(1);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
     }
 }

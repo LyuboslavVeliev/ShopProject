@@ -1,11 +1,14 @@
 package src;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 import src.exceptions.CheckoutNotOpenException;
 import src.exceptions.NotEnoughBudgetException;
@@ -95,6 +98,8 @@ public class Shop {
 
         BigDecimal currentGoodsShippedExpenses = BigDecimal.valueOf(0);
 
+        Receipt receipt = new Receipt(checkout.getCurrentCashier(), LocalTime.now());
+
         Enumeration<Goods> goods2 = purchasedGoods.keys();
         while (goods2.hasMoreElements()) {
             Goods currentGoods = goods2.nextElement();
@@ -124,14 +129,33 @@ public class Shop {
 
             this.shippedGoods.put(currentGoods, currentQuantity - demandedQuantity);
             this.soldGoods.put(currentGoods, demandedQuantity);
+            receipt.addGoods(currentGoods, demandedQuantity);
         }
 
         this.goodsProfit = purchasedGoodsWorth.subtract(currentGoodsShippedExpenses);
 
-        Receipt receipt = new Receipt(checkout.getCurrentCashier(), LocalTime.now());
         this.receipts.add(receipt);
         // Should make this to save it into a file
         receipt.toString();
+    }
+
+    public void readReceiptFromFile(int receiptId) {
+        try {
+            File myObj = new File(receiptId + ".txt");
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                System.out.println(data);
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    public int getCurrentNumberOfReceiptsIssued() {
+        return this.receipts.size();
     }
 
     public int getSoldGoodsCount() {
@@ -161,5 +185,9 @@ public class Shop {
         this.netProfit = this.goodsProfit.subtract(getSalaryExpenses());
 
         return this.netProfit;
+    }
+
+    public Dictionary<Goods, Integer> getShippedGoods() {
+        return this.shippedGoods;
     }
 }

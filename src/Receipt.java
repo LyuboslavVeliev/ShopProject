@@ -1,9 +1,12 @@
 package src;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 public class Receipt {
@@ -50,10 +53,7 @@ public class Receipt {
     }
 
     public String getTimeOfIssueing() {
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        String formattedDate = this.timeOfIssueing.format(timeFormatter);
-
-        return formattedDate;
+        return formatDateTimeOfIssueing();
     }
 
     public long getId() {
@@ -64,6 +64,13 @@ public class Receipt {
         return this.cashier;
     }
 
+    public String formatDateTimeOfIssueing() {
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        String formattedDate = this.timeOfIssueing.format(timeFormatter);
+
+        return formattedDate;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -72,15 +79,32 @@ public class Receipt {
         builder.append("\r\n");
         builder.append("\r\n");
 
-        for (int i = 0; i < this.purchasedGoodsToQuantity.size(); i++) {
-            builder.append(this.purchasedGoodsToQuantity.keys().nextElement().getName() + " x "
-                    + this.purchasedGoodsToQuantity.elements().nextElement() + "   $"
-                    + this.purchasedGoodsToPrice.elements().nextElement());
+        builder.append("Time of issueing: " + formatDateTimeOfIssueing());
+
+        builder.append("\r\n");
+        builder.append("\r\n");
+
+        Enumeration<Goods> goods = this.purchasedGoodsToQuantity.keys();
+        while (goods.hasMoreElements()) {
+            Goods currGoods = goods.nextElement();
+
+            builder.append(currGoods.getName() + " x "
+                    + this.purchasedGoodsToQuantity.get(currGoods) + "   $"
+                    + this.purchasedGoodsToPrice.get(currGoods));
             builder.append("\r\n");
         }
         builder.append("\r\n");
 
         builder.append("Total sum: $" + this.totalSum);
+
+        try {
+            FileWriter myWriter = new FileWriter(this.id + ".txt");
+            myWriter.write(builder.toString());
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
 
         return builder.toString();
     }

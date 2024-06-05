@@ -1,8 +1,0 @@
-Receipt #1:
-
-Time of issueing: 19:25
-
-banana x 1   $3.00
-apple x 1   $2.76
-
-Total sum: $5.76

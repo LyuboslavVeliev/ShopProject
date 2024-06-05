@@ -190,4 +190,16 @@ public class Shop {
     public Dictionary<Goods, Integer> getShippedGoods() {
         return this.shippedGoods;
     }
+
+    public int getCheckoutsCount() {
+        return this.checkouts.size();
+    }
+
+    public int getCashiersCount() {
+        return this.cashiers.size();
+    }
+
+    public Dictionary<Goods, Integer> getSoldGoods() {
+        return this.soldGoods;
+    }
 }

@@ -13,8 +13,9 @@ import java.util.Scanner;
 import src.exceptions.CheckoutNotOpenException;
 import src.exceptions.NotEnoughBudgetException;
 import src.exceptions.NotEnoughGoodsException;
+import src.interfaces.IShop;
 
-public class Shop {
+public class Shop implements IShop {
     private Dictionary<Goods, Integer> shippedGoods;
     private Dictionary<Goods, Integer> soldGoods;
 

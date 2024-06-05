@@ -2,7 +2,9 @@ package src;
 
 import java.math.BigDecimal;
 
-public class Cashier {
+import src.interfaces.ICashier;
+
+public class Cashier implements ICashier {
     private final long id;
     private static long numberOfInstances = 0;
     private String name;

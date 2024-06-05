@@ -5,9 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Scanner;
-
-import org.junit.Assert;
 
 import src.enums.Category;
 

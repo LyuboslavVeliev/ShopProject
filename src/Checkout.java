@@ -1,6 +1,8 @@
 package src;
 
-public class Checkout {
+import src.interfaces.ICheckout;
+
+public class Checkout implements ICheckout {
     private final long id;
     private static long numberOfInstances = 0;
     private Cashier cashier;

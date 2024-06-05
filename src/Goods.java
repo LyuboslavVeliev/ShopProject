@@ -4,8 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import src.enums.Category;
+import src.interfaces.IGoods;
 
-public class Goods {
+public class Goods implements IGoods {
     private final long id;
     private static long numberOfInstances = 0;
     private String name;
